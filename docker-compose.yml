@@ -22,9 +22,9 @@ services:
    
     classification:
         build: 
-            context: "./microservices/ri-analytics-classification-twitter"
+            context: ./microservices/ri-analytics-classification-twitter
             args: 
-            - GDRIVE_DL_LINK: 1fcMjYmmjY9-WMOauYle6fFLooJ0u9OlU
+            - GDRIVE_DL_LINK: "1fcMjYmmjY9-WMOauYle6fFLooJ0u9OlU"
         ports: 
             - 9655:9655
         volumes:
