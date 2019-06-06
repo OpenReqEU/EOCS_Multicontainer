@@ -4,7 +4,6 @@ services:
 
    
     twitterfeedback:
-        #image: get-tweets
         build: ./microservices/ri-collection-explicit-feedback-twitter
         ports: 
             - 9624:9624
