@@ -46,6 +46,32 @@ app.delete('/requirement', function (req, res) {
 	});
 })
 
+app.delete('/requirements', function (req, res) {
+	MongoClient.connect(url, function(err, db) {
+	  if (err) return res.status(500).json(err);
+	  var queryReq = req.query;
+	  var param = null;
+	  if (queryReq.hasOwnProperty("account")){
+		param = queryReq.account;
+		var query = {"in_reply_to_screen_name" : param};
+		const dbo = db.db('twitter_data');
+	  
+		dbo.collection('tweet').remove((query),function(err) {
+			if (err) {
+				return res.status(500).json(err);
+			}
+		});
+		console.log("Requirements deleted");
+		db.close();
+		res.json({"result": "Delete"});
+
+	  }else{
+		  db.close();
+		  res.json({"result": "Not found"});
+	  }
+	});
+})
+
 function uppercaseFirstLetter(string) 
 {
     return string.charAt(0).toUpperCase() + string.slice(1);
