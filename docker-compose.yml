@@ -40,7 +40,28 @@ services:
             - twitterfeedback
             - storage
             - classification
-     
+
+    liquidedemocracy:
+        build: ./microservices/gds-edemocracy
+        ports:
+          - "9750:9750"
+        depends_on:
+          - "db"
+        environment:
+          MIX_ENV: docker
+          EXVOTE_PORT: 9750
+          EXVOTE_PATH: /
+          EXVOTE_HOST: localhost
+    db:
+        image: postgres
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ex_vote_dev
+        volumes:
+          - "db-data:/var/lib/postgresql/data"
+
+
     frontend:    
         build: ./frontend
         ports:
@@ -51,5 +72,8 @@ services:
         build: ./backend
         ports:
             - 3000:3000
-    
+
+volumes:
+  db-data:
+          #external : true
 
