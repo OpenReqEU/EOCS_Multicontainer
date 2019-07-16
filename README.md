@@ -7,6 +7,7 @@ In frontend/src/app/requirement.service.ts you should change baseURL to your IP 
 
 In docker-compose.yaml, change BASE_URL with the correct address IP:
 BASE_URL=http://193.146.116.148
+and the same with MONGO_IP environment variable
 
 ## Launch
 docker-compose up

@@ -18,6 +18,15 @@ services:
             - 9682:9682
         environment:
             - MONGO_IP=193.146.116.148:27017
+        depends_on:
+            - mongodb
+    
+    mongodb:
+        image: mongo
+        ports: 
+            - 27017:27017
+        volumes: 
+            - "databaseEOCS:/data/db"
    
     classification:
         build: 
@@ -74,6 +83,7 @@ services:
             - 3000:3000
 
 volumes:
-  db-data:
-          #external : true
+    db-data:
+        #external : true
+    databaseEOCS:
 
