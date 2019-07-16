@@ -1,0 +1,56 @@
+<%= case @participation do %>
+  <% %{:role => "user"} -> %>
+  <p> Thank you for your participation in this project. Now the candidate you voted for has the opportunity to vote on tickets</p>
+  <% %{:role => "candidate"} -> %>
+    <h3 class="title">Vote for tickets:</h3>
+    <table class="table is-fullwidth">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th class="has-text-centered">Vote</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% votes = get_candidate_votes(@participation) %>
+        <%= for ticket <- @project.tickets do %>
+          <tr>
+            <td style="width: 100%;">
+              <a href="<%= ticket.url %>"><%= ticket.title %></a>
+            </td>
+            <td>
+            <%= if vote = Enum.find(votes, fn (vote) -> vote.ticket_id == ticket.id end) do %>
+              <%= form_for @conn, project_path(@conn, :delete_candidate_vote), fn f -> %>
+                <%= hidden_input f, :participation_ticket_id, value: vote.id %>
+                <%= hidden_input f, :project_id, value: @project.id %>
+                <div class="field is-pulled-right">
+                  <button class="button is-danger is-outlined" type="submit">
+                    <span class="icon is-small">
+                      <i class="fas fa-times"></i>
+                    </span>
+                    <span>Remove vote</span>
+                  </button>
+                </div>
+              <% end %>
+            <% else %>
+              <%= form_for changeset_add_candidate_vote(), project_path(@conn, :add_candidate_vote), fn f -> %>
+                <%= hidden_input f, :participation_id, value: @participation.id %>
+                <%= hidden_input f, :ticket_id, value: ticket.id %>
+                <%= hidden_input f, :project_id, value: @project.id %>
+                <div class="field is-pulled-right">
+                  <button class="button is-success is-outlined" type="submit">
+                    <span class="icon is-small">
+                      <i class="fas fa-check"></i>
+                    </span>
+                    <span>Add vote</span>
+                  </button>
+                </div>
+              <% end %>
+            <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% nil -> %>
+    <p>Sorry, the registration for this project has been closed</p>
+<% end %>

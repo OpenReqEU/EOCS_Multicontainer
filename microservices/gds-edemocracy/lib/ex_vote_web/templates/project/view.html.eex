@@ -1,0 +1,61 @@
+<%= render "components/info_box.html", assigns %>
+
+<hr />
+<div class="box">
+  <h2 class="title is-spaced"><%= @project.title %></h2>
+  <div class="level">
+    <div class="level-item has-text-centered">
+      <div>
+        <p class="heading">Partcipations</p>
+        <p class="title"><%= length(@project.participations) %></p>
+      </div>
+    </div>
+
+    <div class="level-item has-text-centered">
+      <div>
+        <p class="heading">Current phase</p>
+        <p class="title"><%= phase_name(@project.current_phase) %></p>
+      </div>
+    </div>
+
+    <div class="level-item has-text-centered">
+      <div>
+        <p class="heading">Next phase</p>
+        <p class="title"><%= time_to_next_phase(@project) %></p>
+      </div>
+    </div>
+  </div>
+  <hr />
+  <h3 class="subtitle is-spaced">Tickets</h3>
+  <table class="table is-fullwidth">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <%= if Enum.any?(@project.tickets, fn ticket -> ticket.description end) do %>
+          <th>Description</th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <%= for ticket <- @project.tickets do %>
+      <tr>
+        <td>
+          <%= if ticket.url do %>
+            <a href="<%= ticket.url %>"><%= ticket.title %></a>
+          <% else %>
+            <span><%= ticket.title %></span>
+          <% end %>
+        </td>
+        <%= if ticket.description do %>
+          <td>
+            <span><%= ticket.description %></span>
+          </td>
+        <% end %>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<hr />
+
+<%= render "components/participation_box.html", assigns %>
