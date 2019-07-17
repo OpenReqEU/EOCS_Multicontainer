@@ -20,9 +20,11 @@ defmodule ExVoteWeb.Api.UserController do
   def login(conn, params) do
     case Accounts.login(params) do
       {:ok, user} ->
-        token = ExVoteWeb.Tokens.sign(user.id)
+		token = ExVoteWeb.Tokens.sign(user.id)
+		login = %{id: user.id, token: token}
+		
         conn
-        |> assign(:token, token)
+        |> assign(:login, login)
         |> render("success.json")
       {:error, changeset} ->
         conn
