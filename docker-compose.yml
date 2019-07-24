@@ -8,10 +8,10 @@ services:
         ports: 
             - 9624:9624
         environment:
-            - CONSUMER_KEY=rouiGCgbCWtW0JE9wCVzJtqWs
-            - CONSUMER_SECRET=UP1pVOrbJZcs3MloIGtlBNA3RQSsHYG6WIE5O34Q5icUyy4qEM
-            - ACCESS_KEY=1088353565293404160-a6dEctneMCumiafDWvEPybByMtKpJS
-            - ACCESS_SECRET=tHzmjGvU5ijzy2HGr5kw390PJu5T1RvEffpY7d4UhiG0a
+            - CONSUMER_KEY=75XRiD5jPZYLWJbetYzppUzXW
+            - CONSUMER_SECRET=hM5zTc9PRWWvmzTaaxVfDkcEzBVPUsbtx87FXhtEnm0WE9dL6R
+            - ACCESS_KEY=1153914656081289216-dxDcVj7cQbsQiDAwbHMx7pNzcMYjo4
+            - ACCESS_SECRET=l5hkwN6T68K4D2Vjd2PV4a2RWLmTHRCPPN9SWSeha3e93
     storage:
         build: ./microservices/ri-storage-twitter
         ports:
