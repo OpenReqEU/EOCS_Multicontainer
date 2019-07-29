@@ -3,7 +3,8 @@ FROM sellpy/python3-jupyter-sklearn-java
 
 RUN pip3 install --upgrade pip \
     spacy==2.0.18 \
-    Flask==1.0.2 \ 
+    Flask==1.0.2 \
+    flask-cors \
     pandas==0.23.4 \
     numpy==1.15.4 \
     scikit_learn==0.20.1 \

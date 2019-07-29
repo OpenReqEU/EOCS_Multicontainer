@@ -32,6 +32,18 @@ export class RequirementsService {
     );
   }
 
+  deleteVotingProject(project, id){
+    const url = environment.backend_url + '/edemocracyProject?project=' + project + '&id=' + id;
+    return this.httpClient.delete(url).pipe(
+      catchError(this.handleError('deleteVotingProject'))
+    );
+  }
+
+  getParticipantName(id): Observable<any>{
+    const url = environment.backend_url + '/username?id=' + id;
+    return this.httpClient.get(url);
+  }
+
   getProjects(): Observable<any> {
     const url = environment.microservices_url + ':9682/hitec/repository/twitter/observables';
     return this.httpClient.get(url);
@@ -46,17 +58,14 @@ export class RequirementsService {
   }
 
   insertRequirement(account, text, reqClass, from): Observable<any> {
-    const url = environment.microservices_url + ":9682/hitec/repository/twitter/store/tweet/"
-    if (Object.values(ReqClass).includes(reqClass)) {
-      reqClass = reqClass.toLowerCase();
-    } else {
-      reqClass = ReqClass.IRRELEVANT;
-    }
+    const url = environment.microservices_url + ":9682/hitec/repository/twitter/store/tweet/";
+   
+    var status_id = (Math.floor(Math.random() * (999999 - 100000)) + 100000);
     var body = [
       {
         "sentiment": "",
         "sentiment_score": 0,
-        "status_id": "" + (Math.floor(Math.random() * (999999 - 100000)) + 100000),
+        "status_id": "" + status_id,
         "in_reply_to_screen_name": account,
         "tweet_class": reqClass,
         "user_name": from,
@@ -67,6 +76,48 @@ export class RequirementsService {
         "retweet_count": 0
       }
     ];
+    this.classifyRequirement(status_id, text, from, account).subscribe(data =>{
+      console.log(data);
+    //  if (Object.values(ReqClass).includes(reqClass)) {
+    //    reqClass = reqClass.toLowerCase();
+    //  } else {
+        reqClass = ReqClass.IRRELEVANT;
+        var body = [
+          {
+            "sentiment": "",
+            "sentiment_score": 0,
+            "status_id": "" + status_id,
+            "in_reply_to_screen_name": account,
+            "tweet_class": reqClass,
+            "user_name": from,
+            "created_at": 20190601,
+            "favorite_count": 0,
+            "text": text,
+            "lang": "en",
+            "retweet_count": 0
+          }
+        ];
+        return this.httpClient.post(url, JSON.stringify(body));
+  //    }
+
+    });
+    return this.httpClient.post(url, JSON.stringify(body));
+  
+  }
+
+  classifyRequirement(status_id, text, from, account): Observable<any> {
+    const url = environment.microservices_url + ":9655/hitec/classify/domain/tweets/lang/en";
+    
+    var body =[{
+      "created_at": 20180501,
+      "favorite_count": 0,
+      "retweet_count": 0,
+      "text" : text,
+      "status_id": status_id,
+      "user_name": from,
+      "in_reply_to_screen_name": account,
+      "lang": "en"
+      }];
     return this.httpClient.post(url, JSON.stringify(body));
   }
 
@@ -90,37 +141,6 @@ export class RequirementsService {
       return of(result as T);
     };
   }
-  /*
-    createProjectEdemocracy(project, requirements, candidatesDate, endDate) : Observable<any> {
-      console.log(project);
-      let url = environment.microservices_url + ":9750/api/projects?";
-  
-      let tickets = "";
-      let index = 0;
-      for (let req of requirements) {
-        let text = req.text.replace(/#/g,''); // 400 response with query string params if it has a # character
-        let urlTicket ="tickets[" + index + "][url]=url";
-        let titletTicket = "&tickets[" + index + "][title]=" + text;
-        let idTicket = "&tickets[" + index + "][id]=" + index;
-        let externalIdTicket = "&tickets[" + index + "][external_id]=" + req.status_id.slice(-7);
-        let descriptionTicket = "&tickets[" + index + "][description]=" + text;
-        tickets += urlTicket + titletTicket + idTicket + externalIdTicket + descriptionTicket + "&";
-        index++;
-      }
-      url += tickets;
-  
-      let body = new URLSearchParams();
-      body.set('title', project);
-     
-      //TODO create form with phase dates
-      body.set('phase_candidates', candidatesDate);
-      body.set('phase_end', endDate);
-      body.set('id', '10');
-  
-      url += body;
-      return this.httpClient.post(url, JSON.stringify(body));
-    }
-    */
 
   createProjectEdemocracy(project, requirements, candidatesDate, endDate): Observable<any> {
     let url = environment.microservices_url + ":9750/api/projects";
@@ -158,7 +178,7 @@ export class RequirementsService {
     return this.httpClient.get(url);
   }
 
-  getProjectsEdemocracy(): Observable<any> {
+  getEdemocracyProjects(): Observable<any> {
     const url = environment.microservices_url + ':9750/api/projects/';
     return this.httpClient.get(url);
   }
@@ -190,13 +210,14 @@ export class RequirementsService {
    * @param token 
    * @param id It can be userId or ticketId depending context delegate or vote
    */
-  vote(projectId, token, id): Observable<any> {
+  vote(projectId, token, ids): Observable<any> {
     const url = environment.microservices_url + ':9750/api/projects/' + projectId + '/participations/current/votes';
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('Authorization', token);
     headers = headers.append('Content-Type', 'application/json');
+
     let body = {
-      "votes": [id]
+      "votes": ids
     };
     return this.httpClient.put(url, body, { headers: headers });
   }

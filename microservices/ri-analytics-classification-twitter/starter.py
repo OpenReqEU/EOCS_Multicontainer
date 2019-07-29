@@ -3,10 +3,15 @@ import os
 
 #!flask/bin/python
 from flask import Flask, json, jsonify, logging, request
+from flask_cors import CORS, cross_origin
+
 
 import classification_facade
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+
 
 ###########################
 # receives a json payload containing a list of tweets
