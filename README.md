@@ -24,6 +24,9 @@ In docker-compose.yaml, change BASE_URL with the correct address IP: BASE_URL=ht
 Ohter considerations: 
 In docker-compose.yaml you should use your Twitter API key and token.
 
+## Build
+docker-compose build
+
 ## Launch in brackground
 docker-compose up -d
 
