@@ -19,6 +19,8 @@ It's platform developed in Angular 7 to collect requirements of different citize
 
 In frontend/src/environments you should change urls to your IP address.
 
+Also, in backend/backend.js you should change urls.
+
 In docker-compose.yaml, change BASE_URL with the correct address IP: BASE_URL=http://193.146.116.148 and the same with MONGO_IP environment variable
 
 Ohter considerations: 
