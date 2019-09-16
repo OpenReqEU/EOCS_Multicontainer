@@ -134,6 +134,7 @@ export class RequirementsService {
 
     for (let req of requirements) {
       let text = req.text.replace(/#/g, ''); // 400 response with query string params if it has a # character
+	  text = text.substring(0,250);
       let newTicket = {
         url: "url",
         title: text,

@@ -164,12 +164,20 @@ func crawlObservableTweets(accountName string, lang string) []Tweet {
 func chunkTweets(tweets []Tweet) [][]Tweet {
 	var chunks [][]Tweet
 	var chunk []Tweet
+	
+	var lenTweets = len(tweets)
+	var lenNormalClassify = 25
+	var lenToClassify = lenNormalClassify
+	if(lenNormalClassify > lenTweets){
+		lenToClassify = 5
+	}
+		
 	for len(tweets) > 0 {
 		a := tweets[len(tweets)-1]
 		tweets = tweets[:len(tweets)-1]
 		chunk = append(chunk, a)
 
-		if len(chunk) == 25 {
+		if len(chunk) == lenToClassify {
 			c := make([]Tweet, len(chunk))
 			copy(c, chunk)
 			chunks = append(chunks, c)
