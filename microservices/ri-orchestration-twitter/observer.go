@@ -50,7 +50,7 @@ func AddObservable(observable ObservableTwitter) {
 	}
 
 	fmt.Printf("[%s] 2.2.3: add cron job\n", accountName)
-	err := observableManager[accountName].CronJob.AddFunc(getObserverInterval(interval), func() {
+	spec, err := observableManager[accountName].CronJob.AddFunc(getObserverInterval(interval), func() {
 		fmt.Printf("[%s] 2.3: crawl tweets\n", accountName)
 		crawledTweets := crawlObservableTweets(accountName, lang)
 		storeCrawledTweets(crawledTweets)
@@ -76,6 +76,7 @@ func AddObservable(observable ObservableTwitter) {
 			fmt.Printf("[%s] 2.6: topics extracted and stored\n", accountName)
 		}
 	})
+	fmt.Printf("%s", spec)
 	if err != nil {
 		fmt.Printf("ERR - could not add %s as observer\nGot error: %v\n---\n", accountName, err)
 	}
@@ -210,9 +211,10 @@ func storeTweetsTopics(tweet Tweet) {
 
 func ObserveUnclassifiedTweets() {
 	observerUnclassifiedTweets = cron.New()
-	err := observerUnclassifiedTweets.AddFunc(getObserverInterval("midnight"), func() {
+	spec, err := observerUnclassifiedTweets.AddFunc(getObserverInterval("midnight"), func() {
 		retrieveAndProcessUnclassifiedTweets()
 	})
+	fmt.Printf("%s", spec)
 	if err != nil {
 		fmt.Println("ERR - could not add the observer for unclassified tweets", err)
 	}
