@@ -106,7 +106,21 @@ export class RequirementsComponent implements OnInit {
         this.filteredRequirements = this.requirements = apiData;
         console.log("idEde=" + this.projectSelected.idEde);
         if (this.projectSelected.idEde) {      //call Edemocracy and get more info
-          this.getEdemocracyInfo();
+          this.getEdemocracyInfo();		  
+		  this.requirementService.getTicketsEdemocracy(this.projectSelected.idEde)
+		  .subscribe(data => {
+			//Only we get requirements from Edemocracy because it is collecting tweets yet  
+				this.filteredRequirements = [];
+				for(let req of this.requirements){
+					for(let reqEde of data){
+						if(req.status_id == reqEde.external_id || (reqEde.external_id.toString().length > 4 && (req.status_id.toString()).includes(reqEde.external_id.toString())) ){
+							this.filteredRequirements.push(req);							
+						}
+					}
+				}
+				this.requirements = this.filteredRequirements;
+			});
+		  
         } else {
           this.phase = Phase.PHASE_0;
         }
@@ -319,7 +333,8 @@ export class RequirementsComponent implements OnInit {
 
   private registerVoted(externalId, voted) {
     for (let req of this.requirements) {
-      if (req.status_id == externalId) {
+      if (req.status_id == externalId || (externalId.toString().length > 4 && (req.status_id.toString()).includes(externalId.toString())  ) ) {
+		console.log("voted")
         req.voted = voted;
       }
     }
@@ -338,7 +353,8 @@ export class RequirementsComponent implements OnInit {
     let ticketFound = false;
     let voted = false;
     for (let ticket of tickets) {
-      if (ticket.external_id == externalId) {
+	  let externalIdProcessed = externalId.length > 7?externalId.slice(-7):externalId;
+      if (ticket.external_id == externalIdProcessed) {
         ticketFound = true;
         let ticketId = ticket.id;
         let voteFound = false;
@@ -376,11 +392,20 @@ export class RequirementsComponent implements OnInit {
   }
 
   getVotes() {
-    this.requirementService.getReport(this.projectSelected.idEde).subscribe(result => {
+    this.requirementService.getReport(this.projectSelected.idEde).subscribe(result => {		
       for (let ticket of result.votes.tickets) {
         for (let req of this.requirements) {
-          if (req.status_id == ticket.ticket.external_id) {
+          if (req.status_id == ticket.ticket.external_id || (ticket.ticket.external_id.toString().length > 4 && (req.status_id.toString()).includes(ticket.ticket.external_id.toString())  ) ) {
             req.votes = ticket.votes_received;
+			if(ticket.voted_by.length > 0){
+				for(let voter of ticket.voted_by){
+					for(let candidate of result.votes.candidates){
+						if(candidate.candidate.id == voter){
+							req.votes = req.votes + candidate.votes_received;
+						}
+					}
+				}
+			}
           }
         }
         this.filteredRequirements = this.requirements;

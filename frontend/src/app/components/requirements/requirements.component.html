@@ -81,7 +81,7 @@
   <div *ngIf="projectSelected else nodata">
     <h3>Requirements</h3>
 
-    <div align="center">
+    <div *ngIf="phase === phase0" align="center">
       <button class="btn btn-dark" routerLink="/insert">Insert requirements</button>
       <p></p>
     </div>
@@ -127,7 +127,7 @@
             <span [hidden]="sortType == 'votes' && !sortReverse || sortType !='votes'">▲</span>
             <span [hidden]="sortType == 'votes'">▲▼</span>
           </th>
-          <th scope="col">Action</th>
+          <th scope="col" *ngIf="phase === phase0">Action</th>
 
         </tr>
       </thead>
@@ -140,7 +140,7 @@
           <td>{{req.sentiment}}</td>
           <td>{{req.user_name == 'FILE' ? 'File' : req.user_name == 'MANUAL' ? 'Manual' : 'Twitter'}}</td>
           <td align="right" *ngIf="phase === phase3" style="background-color:coral">{{req.votes}}</td>
-          <td align="center">
+          <td align="center" *ngIf="phase === phase0">
             <span (click)="deleteRequirement(req.status_id)"><i style="cursor: pointer;"
                 class="fas fa-trash-alt"></i></span>
           </td>

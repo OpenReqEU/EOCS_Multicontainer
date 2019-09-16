@@ -38,6 +38,9 @@ func Crawl(l string, t TimeFrame, accountName string, paginate bool) []anaconda.
 		}
 		log.Printf("start crawling\n")
 		for _, tweet := range searchResult.Statuses {
+			if len(tweet.InReplyToScreenName) == 0 {
+				tweet.InReplyToScreenName = accountName
+			}
 			tweets = append(tweets, tweet)
 			if tweet.Id < tweetMaxID {
 				tweetMaxID = tweet.Id
